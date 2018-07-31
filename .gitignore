@@ -1,0 +1,4 @@
+activate
+venv/
+*.xlsx
+*.Interpretations.tsv
