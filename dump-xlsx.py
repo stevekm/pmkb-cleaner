@@ -26,8 +26,8 @@ xls_file = pd.ExcelFile(file_name)
 xls_dict = {sheet_name: xls_file.parse(sheet_name) for sheet_name in xls_file.sheet_names}
 
 # read each sheet into a Pandas dataframe then export as TSV
-for sheet_name, sheet_data, in xls_dict.iteritems():
+for sheet_name, sheet_data, in xls_dict.items():
     sheet_df = xls_dict[sheet_name]
-    out_file_name = '.'.join([file_base, sheet_name, "tsv"]).replace(" ", "_") # use this if you want to preserve the sheet names
+    out_file_name = '.'.join([file_base, sheet_name, "tsv"]).replace(" ", "_")
     out_file_path = os.path.join(file_dir, out_file_name)
-    sheet_df.to_csv(out_file_path,sep ='\t', index = False, encoding = 'utf-8')
+    sheet_df.to_csv(out_file_path,sep ='\t', index = False, encoding = "utf-16") # encoding = 'utf-8'

@@ -6,7 +6,7 @@ BASENAME:=pmkb
 XLSX:=$(BASENAME).xlsx
 TSV:=$(BASENAME).Interpretations.tsv
 
-all: download venv dump tumor tissue
+all: download conda dump tumor tissue
 
 # ~~~~~ download the PMKB database file ~~~~~ #
 $(XLSX):
@@ -15,28 +15,26 @@ $(XLSX):
 download: $(XLSX)
 
 
-# ~~~~~ Create Python 2.7 Virtual Environment and install pandas ~~~~~ #
-venv/bin/activate:
-	@echo ">>> Creating new virtual environment"
+# ~~~~~ Setup Conda Python 3 needed to manipulate UTF-16 xlsx ~~~~~ #
+CONDASH:=Miniconda3-4.5.4-Linux-x86_64.sh
+CONDAURL:=https://repo.continuum.io/miniconda/$(CONDASH)
+conda:
+	wget "$(CONDAURL)" && \
+	bash "$(CONDASH)" -b -p conda && \
+	rm -f "$(CONDASH)" 
+conda-install: conda
+	unset PYTHONHOME && \
 	unset PYTHONPATH && \
-	virtualenv venv --no-site-packages
-
-# install the dependencies
-setup-venv: venv/bin/activate
-	@echo ">>> Installing requirements to the virtualenv"
-	unset PYTHONPATH && \
-	source venv/bin/activate && \
-	pip install -r requirements.txt
-venv-py2.7: setup-venv
-venv: $(PYTHONVERSION)
-.PHONY: venv
+	export PATH=$${PWD}/conda/bin:$${PATH} && \
+	conda install -y pandas 'xlrd>=0.9.0'
 
 
 # ~~~~~ dump the .xlsx file to .tsv ~~~~~ #
-$(TSV): $(XLSX) venv/bin/activate
+$(TSV): $(XLSX) conda
 	@echo ">>> Dumping .xlsx to .tsv"
+	unset PYTHONHOME && \
 	unset PYTHONPATH && \
-	source venv/bin/activate && \
+	export PATH=$${PWD}/conda/bin:$${PATH} && \
 	python dump-xlsx.py "$(XLSX)"
 dump: $(TSV)
 
@@ -45,11 +43,17 @@ TUMORFILE:=tumor-terms.txt
 TISSUEFILE:=tissue-terms.txt
 
 $(TUMORFILE): $(TSV)
-	python cut.py "$(TSV)" -f 2 | tr ',' '\n'| sed -e 's|^[[:space:]]||g' -e 's|[[:space:]]$$||g' -e 's|^$$||g' | sort -u > "$(TUMORFILE)"
+	unset PYTHONHOME && \
+	unset PYTHONPATH && \
+	export PATH=$${PWD}/conda/bin:$${PATH} && \
+	python cut.py "$(TSV)" -f 2 -e "utf-16" | tr ',' '\n'| sed -e 's|^[[:space:]]||g' -e 's|[[:space:]]$$||g' -e 's|^$$||g' | sort -u > "$(TUMORFILE)"
 tumor: $(TUMORFILE)
 
 $(TISSUEFILE): $(TSV)
-	python cut.py "$(TSV)" -f 3 | tr ',' '\n' | sed -e 's|^[[:space:]]||g' -e 's|[[:space:]]$$||g' -e 's|^$$||g' | sort -u > "$(TISSUEFILE)"
+	unset PYTHONHOME && \
+	unset PYTHONPATH && \
+	export PATH=$${PWD}/conda/bin:$${PATH} && \
+	python cut.py "$(TSV)" -f 3 -e "utf-16" | tr ',' '\n' | sed -e 's|^[[:space:]]||g' -e 's|[[:space:]]$$||g' -e 's|^$$||g' | sort -u > "$(TISSUEFILE)"
 tissue: $(TISSUEFILE)
 
 clean:
