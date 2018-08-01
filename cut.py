@@ -2,6 +2,7 @@
 """
 Prints a single column from a file
 Use this when terminal 'cut' doesnt work due to formatting issues
+NOTE: Python 3+ required for utf-16 input !! 
 """
 import sys
 import csv
@@ -30,7 +31,7 @@ def parse():
     parser.add_argument('input_file', nargs=1, help="Input file")
     parser.add_argument("-d", default = '\t', dest = 'delimiter', help="Delimiter")
     parser.add_argument("-f", default = 1, dest = 'field_num', help="Column in the file to output")
-    parser.add_argument("-e", default = 'utf-8', dest = 'encoding', help="Text encoding") # "utf-16"
+    parser.add_argument("-e", default = 'utf-8', dest = 'encoding', help="Text encoding. NOTE: Python 3+ required for utf-16") # "utf-16"
     args = parser.parse_args()
 
     main(**vars(args))

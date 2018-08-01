@@ -39,8 +39,8 @@ $(TSV): $(XLSX) conda
 dump: $(TSV)
 
 # ~~~~~ get the Tumor and Tissue terms from the sheet ~~~~~ #
-TUMORFILE:=tumor-terms.txt
-TISSUEFILE:=tissue-terms.txt
+TUMORFILE:=$(BASENAME)-tumor-terms.txt
+TISSUEFILE:=$(BASENAME)-tissue-terms.txt
 
 $(TUMORFILE): $(TSV)
 	unset PYTHONHOME && \
