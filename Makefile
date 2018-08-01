@@ -1,6 +1,5 @@
 # Makefile for downloading and cleaning up the Excel formatted 
 # clinical interpretations from Weill Cornell Precision Medicine Knowledge Base
-PYTHONVERSION:=venv-py2.7
 URL:=https://pmkb.weill.cornell.edu/therapies/download.xlsx
 BASENAME:=pmkb
 XLSX:=$(BASENAME).xlsx
