@@ -55,5 +55,18 @@ $(TISSUEFILE): $(TSV)
 	python cut.py "$(TSV)" -f 3 -e "utf-16" | tr ',' '\n' | sed -e 's|^[[:space:]]||g' -e 's|[[:space:]]$$||g' -e 's|^$$||g' | sort -u > "$(TISSUEFILE)"
 tissue: $(TISSUEFILE)
 
+
+# ~~~~~ convert wide format table to long format ~~~~~ #
+LONGTABLE:=$(BASENAME).long.tsv
+wide2long:
+	unset PYTHONHOME && \
+	unset PYTHONPATH && \
+	export PATH=$${PWD}/conda/bin:$${PATH} && \
+	python wide2long.py -f 2 -e "utf-16" "$(TSV)" -o "$(LONGTABLE)" --output-encoding "utf-16"
+
+
+
+
+
 clean:
 	rm -f "$(XLSX)" "$(TSV)" "$(TISSUEFILE)" "$(TUMORFILE)"
